@@ -5,34 +5,54 @@
 [![R-CMD-check](https://github.com/r-lib/usethis/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/r-lib/usethis/actions/workflows/R-CMD-check.yaml)
 
 <!-- badges: end -->
-<style type="text/css">
-body {
-   text-align: justify; 
-   font-style: normal;
-   font-family: "Montserrat";
-   font-size: 16px;
-}
-h1 {
-  color: #131632;
-  font-size: 30px
-}
-h2 {
-  color: #131632;
-  font-size: 28px
-}
-h3 {
-  color: #24465A;
-  font-size: 25px
-}
-</style>
 
-### Índice de Calidad del Entorno
+# Índice de Calidad del Entorno
 
-### Nivel municipal
+Este proyecto proporciona un visualizador del mapa dinámico del Índice
+de Calidad del Entorno a nivel municipal, 2020.
 
-Visualizador del mapa dinámico del índice de calidad del entorno a
-municipal.
+## Descripción
 
-**Enlace:** <https://indicemx.github.io/ICE_2020/ICE_2020.html>
+El Índice de Calidad del Entorno (ICE) es una herramienta que permite
+evaluar y visualizar la calidad del entorno en diferentes municipios.
+Este índice se basa en diversos factores de equipamiento, rezagos
+económicos, y accesibilidad que afectan la calidad de vida de los
+habitantes.
 
-![](https://github.com/IndiceMx/ICE_2020/blob/main/img/images01.png?raw=true)
+## Visualizador del Mapa Dinámico
+
+Puedes acceder al visualizador del mapa dinámico del ICE a nivel
+municipal a través del siguiente enlace:
+
+[**Visualizador del ICE
+2020**](https://indicemx.github.io/ICE_2020/ICE_2020.html)
+
+## Contenido
+
+- [Descripción](#descripción)
+- [Visualizador del Mapa Dinámico](#visualizador-del-mapa-dinámico)
+- [Cómo usar](#cómo-usar)
+- [Datos](#datos)
+- [Contribuciones](#contribuciones)
+
+## Cómo usar
+
+Para usar el visualizador del ICE, sigue estos pasos:
+
+1.  Haz clic en el enlace proporcionado en la sección de [Visualizador
+    del Mapa Dinámico](#visualizador-del-mapa-dinámico).
+2.  Navega por el mapa interactivo para explorar los diferentes
+    municipios y sus índices de calidad del entorno.
+3.  Utiliza las herramientas del mapa para acercar, alejar y obtener más
+    detalles sobre cada área.
+
+## Datos
+
+Los datos utilizados para generar el Índice de Calidad del Entorno
+provienen de diversas fuentes oficiales y han sido procesados para
+proporcionar una evaluación precisa y actualizada de la calidad del
+entorno a nivel municipal.
+
+------------------------------------------------------------------------
+
+Desarrollado por [dvillasanao](#).
