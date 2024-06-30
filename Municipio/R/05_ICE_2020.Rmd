@@ -2,14 +2,14 @@
 title: "Índice de calidad del entorno"
 output: 
   flexdashboard::flex_dashboard:
-    logo: https://raw.githubusercontent.com/IndiceMx/ICE_2020/8af22493c664dd9780c8a926127163a2beb37a33/img/images.svg
+    logo: https://raw.githubusercontent.com/dvillasanao/ICE_2020_Leaflet/main/img/images.svg
     output_dir: docs
     orientation: columns
     vertical_layout: fill
     self_contained: yes
     mode: selfcontained
     social: [ "twitter", "facebook", "linkedin" ]
-    source_code:  https://github.com/IndiceMx/ICE_2020
+    source_code:  https://github.com/dvillasanao/ICE_2020_Leaflet
     theme: 
       version: 4
       bg: "#FFFFFF"
@@ -27,8 +27,10 @@ output:
 ---
 <style>
 img{
-     max-width:30px;
-     max-height:30px;
+     max-width:10;
+     max-height:10;
+     width: "20px";
+     height: "20px";
      background-color: 'transparent';
 }
 </style>
@@ -41,6 +43,6 @@ options(encoding = "UTF8")
 
 
 <!--html_preserve-->
-<iframe src = "https://indicemx.github.io/ICE_2020/" position= "absolute"; top="0"; left="0"; bottom="0"; right="0"; width="100%"; height="100%"; border="none"; margin="0"; padding="0";  frameborder="0"; overflow="hidden"; display= "block";  min-height= "100vh";>"</iframe>
+<iframe src = "https://dvillasanao.github.io/ICE_2020_Leaflet/Municipio/Output/ICE_2020.html" position= "absolute"; top="0"; left="0"; bottom="0"; right="0"; width="100%"; height="100%"; border="none"; margin="0"; padding="0";  frameborder="0"; overflow="hidden"; display= "block";  min-height= "100vh";>"</iframe>
 <!--/html_preserve-->
 
