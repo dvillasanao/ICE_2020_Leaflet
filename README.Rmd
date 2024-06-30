@@ -30,7 +30,15 @@ El Índice de Calidad del Entorno (ICE) es una herramienta que permite evaluar y
 
 Puedes acceder al visualizador del mapa dinámico del ICE a nivel municipal a través del siguiente enlace:
 
-[**Visualizador del ICE 2020**](https://indicemx.github.io/ICE_2020/ICE_2020.html)
+[**Visualizador del ICE 2020 a nivel municipal**](https://dvillasanao.github.io/ICE_2020_Leaflet/Municipio/R/05_ICE_2020.html)
+
+<html>
+<body>
+  <a href = "https://dvillasanao.github.io/ICE_2020_Leaflet/Municipio/R/05_ICE_2020.html" target="_blank">
+<img src="img/Leaflet_Municipio.png" width="50%">
+  </a>
+</body>
+</html>
 
 ## Contenido
 
