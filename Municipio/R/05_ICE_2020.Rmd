@@ -27,8 +27,8 @@ output:
 ---
 <style>
 img{
-     max-width:5px;
-     max-height:5px;
+     max-width:1px;
+     max-height:1px;
      background-color: 'transparent';
 }
 </style>
