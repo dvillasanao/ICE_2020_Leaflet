@@ -2,8 +2,9 @@
 
 /* Reducir el tamaño del logo */
 .logo {
-  max-width: 5px; /* Ajusta este valor según el tamaño deseado */
-  height: auto; /* Mantener la proporción */
+  max-width:5px;
+  max-height:5px;
+  background-color: 'transparent';
 }
 
 .img{
