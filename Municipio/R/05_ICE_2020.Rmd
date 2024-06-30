@@ -1,6 +1,6 @@
 ---
 title: "Índice de calidad del entorno"
-output: 
+output:
   flexdashboard::flex_dashboard:
     logo: https://raw.githubusercontent.com/dvillasanao/ICE_2020_Leaflet/main/img/images.svg
     output_dir: docs
@@ -8,30 +8,25 @@ output:
     vertical_layout: fill
     self_contained: yes
     mode: selfcontained
-    social: [ "twitter", "facebook", "linkedin" ]
-    source_code:  https://github.com/dvillasanao/ICE_2020_Leaflet
-    theme: 
+    social: ["twitter", "facebook", "linkedin"]
+    source_code: https://github.com/dvillasanao/ICE_2020_Leaflet
+    theme:
       version: 4
       bg: "#FFFFFF"
-      fg: "#FDF7F7" 
+      fg: "#FDF7F7"
       primary: "#132463"
       navbar-bg: "#084869"
-      base_font: 
+      base_font:
         google: Prompt
       heading_font:
         google: Sen
       code_font:
-        google: 
+        google:
           family: Montserrat
           local: false
+    css: style.css
 ---
-<style>
-img{
-     max-width:10%;
-     max-height:10%;
-     background-color: 'transparent';
-}
-</style>
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, cache=TRUE,
                       class.source = "fold-hide")

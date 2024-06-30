@@ -1,0 +1,13 @@
+/* style.css */
+
+/* Reducir el tamaño del logo */
+.logo {
+  max-width: 5px; /* Ajusta este valor según el tamaño deseado */
+  height: auto; /* Mantener la proporción */
+}
+
+.img{
+     max-width:30px;
+     max-height:30px;
+     background-color: 'transparent';
+}
