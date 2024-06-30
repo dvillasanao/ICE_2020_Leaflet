@@ -1,0 +1,423 @@
+---
+title: "Índice de calidad del entorno"
+subtitle: "Leaflet 2020"
+author: "Diana Villasana Ocampo"
+output:
+   html_document:
+      highlight: tango
+      theme: flatly
+      toc: yes
+      toc_depth: 2
+      toc_float:
+        collapsed: yes
+---
+\usepackage{color}
+
+```{=html}
+<style>
+code.r{
+  font-size: 10px;
+}
+pre {
+  font-size: 12px
+}
+</style>
+
+<style>
+body {
+text-align: justify;
+font-style: normal;
+font-family: "Montserrat";
+font-size: 12px
+}
+h1.title {
+  font-size: 40px;
+  color: #000D3B;
+}
+h1 {
+  color: #B6854D;
+}
+h2 {
+  color: #172984;
+}
+h3 {
+  color: #172984;
+}
+</style>
+```
+
+```{=html}
+<style>
+.nav>li>a {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    color: #0A2687;
+}
+.nav-pills>li.active>a, .nav-pills>li.active>a:hover, .nav-pills>li.active>a:focus {
+    color: #ffffff;
+    background-color: #09C2BC;
+}
+</style>
+```
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, cache = FALSE, cache.lazy = FALSE, 
+                       eval = TRUE, class.source = "fold-show")
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+options(digits = 2, encoding = "UTF8")
+```   
+ 
+
+```{r, echo=FALSE}
+rm(list = ls())
+```
+
+```{r, echo=FALSE}
+setwd(here::here())
+```
+
+
+```{r, echo = FALSE}
+require(showtext)
+# activar showtext
+showtext_auto()
+font_add_google("Montserrat", "montserrat")
+```
+
+
+```{r, echo = FALSE}
+require(dplyr)
+require(spdplyr)
+require(forcats)
+require(htmltools)
+require(leaflet)
+require(htmlwidgets)
+require(ggmap)
+require(ggplot2)
+require(ggridges)
+require(grDevices)
+require(ggpubr)
+require(forcats)
+require(rgdal)
+require(tibble)
+require(sf)
+require(stringr)
+require(RColorBrewer)
+require(leafgl)
+require(leaflet.extras)
+require(mapview)
+```
+
+## Base de datos  
+
+```{r}
+load(paste0(here::here(), "/Municipio/Output/ICE_2020.RData"))
+```
+
+
+## Shapefiles 
+
+**Se leen los objetos de los shapefiles**
+
+```{r}
+shape_estados <- geojsonio::geojson_read(paste0(here::here(), "/Municipio/Output/Shapes/estados_json.geojson"), what = "sp") 
+shape_municipios_1 <- geojsonio::geojson_read(paste0(here::here(), "/Municipio/Output/Shapes/municipios_1_json.geojson"), what = "sp") 
+shape_municipios_2 <- geojsonio::geojson_read(paste0(here::here(), "/Municipio/Output/Shapes/municipios_2_json.geojson"), what = "sp") 
+shape_municipios_3 <- geojsonio::geojson_read(paste0(here::here(), "/Municipio/Output/Shapes/municipios_3_json.geojson"), what = "sp") 
+shape_municipios_4 <- geojsonio::geojson_read(paste0(here::here(), "/Municipio/Output/Shapes/municipios_4_json.geojson"), what = "sp") 
+shape_municipios_5 <- geojsonio::geojson_read(paste0(here::here(), "/Municipio/Output/Shapes/municipios_5_json.geojson"), what = "sp")
+```
+
+
+### ID's de los polígonos 
+
+**Se vuelven a identificar los ID's de los polígonos** 
+
+```{r}
+shape_estados <- shape_estados %>%
+                  sp::spChFIDs(., str_pad(shape_estados@data$CVE_ENT, 2, "left", pad = "0")) %>% 
+                        select(CVE_ENT)
+shape_municipios_1 <- shape_municipios_1 %>% 
+                       sp::spChFIDs(., str_pad(shape_municipios_1@data$CVE_MUN, 5, "left", pad = "0")) %>% 
+                        select(CVE_MUN)
+shape_municipios_2 <- shape_municipios_2 %>% 
+                       sp::spChFIDs(., str_pad(shape_municipios_2@data$CVE_MUN, 5, "left", pad = "0")) %>% 
+                        select(CVE_MUN)
+shape_municipios_3 <- shape_municipios_3 %>% 
+                       sp::spChFIDs(., str_pad(shape_municipios_3@data$CVE_MUN, 5, "left", pad = "0")) %>% 
+                        select(CVE_MUN)
+shape_municipios_4 <- shape_municipios_4 %>% 
+                       sp::spChFIDs(., str_pad(shape_municipios_4@data$CVE_MUN, 5, "left", pad = "0")) %>% 
+                        select(CVE_MUN)
+shape_municipios_5 <- shape_municipios_5 %>% 
+                       sp::spChFIDs(., str_pad(shape_municipios_5@data$CVE_MUN, 5, "left", pad = "0")) %>% 
+                        select(CVE_MUN)
+```
+
+
+## Leaflet
+
+Se van a estructurar por partes el leaflet, para la realización del mapa del índice de calidad del entorno.  
+
+### Paleta de colores  
+
+```{r}
+require(RColorBrewer)
+paleta <- rev(brewer.pal(5, "RdPu"))
+
+## Paleta de colores                         
+mypalette <- leaflet::colorFactor(palette = paleta, 
+                                            domain = forcats::fct_relevel(ICE_2020$G_ICE, c("Completa", "Grave", "Moderada", "Ligera", "No hay")), 
+                                            na.color = "transparent")
+```
+
+
+### Popups
+
+```{r, results=FALSE}
+state_popup_municipio1 <- readRDS(paste0(here::here(), "/Municipio/Output/PopUp/state_popup_municipio1.RDS"))
+state_popup_municipio2 <- readRDS(paste0(here::here(), "/Municipio/Output/PopUp/state_popup_municipio2.RDS"))
+state_popup_municipio3 <- readRDS(paste0(here::here(), "/Municipio/Output/PopUp/state_popup_municipio3.RDS"))
+state_popup_municipio4 <- readRDS(paste0(here::here(), "/Municipio/Output/PopUp/state_popup_municipio4.RDS"))
+state_popup_municipio5 <- readRDS(paste0(here::here(), "/Municipio/Output/PopUp/state_popup_municipio5.RDS"))
+```
+
+### Formato del título  
+
+```{r}
+# Estructura del título
+tag.map.title <- tags$style(HTML("
+  .leaflet-control.map-title { 
+    transform: translate(-50%,20%);
+    position: fixed !important;
+    left: 50%;
+    text-align: center;
+    padding-left: 10px; 
+    padding-right: 10px; 
+    background: rgba(255,255,255,0.75);
+    font-weight: bold;
+    font-size: 28px;
+  }
+ ")) 
+
+# Nota de página
+title <- tags$div(
+  tag.map.title, HTML("Fuentes:Estimaciones del CONAPO con base en el INEGI, Censo de Población y Vivienda 2020.")
+)  
+```
+
+### Límites del mapa  
+
+Se obtienen los límites del mapa con la función `st_bbox()` de la paquetería `sp`, el cual devuelve el límite de una característica simple como un vector numérico de longitud cuatro, con los valores `xmin`, `ymin`, `xmax` e `ymax`.   
+
+
+```{r}
+bounding_box <- st_bbox(shape_estados)
+bounding_box
+```
+
+### Leaflet 
+
+```{r}
+leaflet <- leaflet(options = leafletOptions(minZoom = 5, maxZoom = 10)) %>% 
+                    addTiles() %>% 
+                     setView(lat = 23.6260333, lng = -102.5375005, zoom = 5) %>%
+                        addMapPane("estados", zIndex = 430) %>% # shown above ames_lines
+                        addMapPane("layer1", zIndex = 420) %>% # shown below
+                        addMapPane("layer2", zIndex = 420) %>% # shown below
+                        addMapPane("layer3", zIndex = 420) %>% # shown below
+                        addMapPane("layer4", zIndex = 420) %>% # shown below
+                        addMapPane("layer5", zIndex = 420) %>% # shown below
+                      setMaxBounds(lng1 = bounding_box[1],
+                                   lat1 = bounding_box[2],
+                                   lng2 = bounding_box[3],
+                                   lat2 = bounding_box[4]) %>%
+                       addProviderTiles(providers$OpenStreetMap, 
+                                         options = providerTileOptions(minZoom = 2, maxZoom = 10)) %>%
+            # capa de grado "Completa"
+             addPolygons(data = shape_municipios_1,
+                          fillColor = paleta[1], # Paleta de colores
+                                       fillOpacity = 0.8,
+                                        stroke = TRUE, # dibujar los bordes del polígono
+                                         weight = 1,  # line thickness
+                                          dashArray = "1",
+                                           opacity = 1,
+                                            color = paleta[1],  # line colour 
+                                             highlight = highlightOptions(weight = 2,
+                                                                          color = "red", # Color de selección
+                                                                          dashArray = "",
+                                                                          fillOpacity = 0.6,
+                                                                          bringToFront = TRUE),
+                            options = pathOptions(pane = "layer1"), 
+                            label = state_popup_municipio1,  # Etiquetas
+                            labelOptions = labelOptions(textOnly = FALSE, 
+                                                        opacity = 0.8,
+                                                        style = list("font-weight" = "normal", 
+                                                                     "font-family" = "montserrat",                 
+                                                                      opacity = 0.7,
+                                                                      padding = "3px 8px"),
+                                                                      textsize = '15px',
+                                                                      direction = "auto"),
+                            group = "Completa") %>%
+            # capa de grado "Grave"
+             addPolygons(data = shape_municipios_2,
+                          fillColor = paleta[2], # Paleta de colores
+                                       fillOpacity = 0.8,
+                                        stroke = TRUE, # dibujar los bordes del polígono
+                                         weight = 1,  # line thickness
+                                          dashArray = "1",
+                                           opacity = 1,
+                                            color = paleta[2],  # line colour 
+                                             highlight = highlightOptions(weight = 2,
+                                                                          color = "red", # Color de selección
+                                                                          dashArray = "",
+                                                                          fillOpacity = 0.6,
+                                                                          bringToFront = TRUE),
+                           options = pathOptions(pane = "layer2"), 
+                           label = state_popup_municipio2,  # Etiquetas
+                           labelOptions = labelOptions(textOnly = FALSE, 
+                                                        opacity = 0.8,
+                                                         style = list("font-weight" = "normal", 
+                                                                      "font-family" = "montserrat",                 
+                                                                       opacity = 0.7,
+                                                                       padding = "3px 8px"),
+                                                                       textsize = '15px',
+                                                                       direction = "auto"),
+                           group = "Grave") %>%  
+            # capa de grado "Moderada"
+             addPolygons(data = shape_municipios_3,
+                          fillColor = paleta[3], # Paleta de colores
+                                       fillOpacity = 0.8,
+                                        stroke = TRUE, # dibujar los bordes del polígono
+                                         weight = 1,  # line thickness
+                                          dashArray = "1",
+                                           opacity = 1,
+                                            color = paleta[3],  # line colour 
+                                             highlight = highlightOptions(weight = 2,
+                                                                          color = "red", # Color de selección
+                                                                          dashArray = "",
+                                                                          fillOpacity = 0.6,
+                                                                          bringToFront = TRUE),
+                           options = pathOptions(pane = "layer3"), 
+                           label = state_popup_municipio3,  # Etiquetas
+                           labelOptions = labelOptions(textOnly = FALSE, 
+                                                        opacity = 0.8,
+                                                         style = list("font-weight" = "normal", 
+                                                                      "font-family" = "montserrat",                 
+                                                                       opacity = 0.7,
+                                                                       padding = "3px 8px"),
+                                                                       textsize = '15px',
+                                                                       direction = "auto"),
+                           group = "Moderada") %>% 
+            # capa de grado "Ligera"
+             addPolygons(data = shape_municipios_4,
+                          fillColor = paleta[4], # Paleta de colores
+                                       fillOpacity = 0.8,
+                                        stroke = TRUE, # dibujar los bordes del polígono
+                                         weight = 1,  # line thickness
+                                          dashArray = "1",
+                                           opacity = 1,
+                                            color = paleta[4],  # line colour 
+                                             highlight = highlightOptions(weight = 2,
+                                                                          color = "red", # Color de selección
+                                                                          dashArray = "",
+                                                                          fillOpacity = 0.6,
+                                                                          bringToFront = TRUE),
+                           options = pathOptions(pane = "layer4"), 
+                           label = state_popup_municipio4,  # Etiquetas
+                           labelOptions = labelOptions(textOnly = FALSE, 
+                                                        opacity = 0.8,
+                                                         style = list("font-weight" = "normal", 
+                                                                      "font-family" = "montserrat",                 
+                                                                       opacity = 0.7,
+                                                                       padding = "3px 8px"),
+                                                                       textsize = '15px',
+                                                                       direction = "auto"),
+                           group = "Ligera") %>% 
+            # capa de grado "No hay"
+             addPolygons(data = shape_municipios_5,
+                          fillColor = paleta[5], # Paleta de colores
+                                       fillOpacity = 0.8,
+                                        stroke = TRUE, # dibujar los bordes del polígono
+                                         weight = 1,  # line thickness
+                                          dashArray = "1",
+                                           opacity = 1,
+                                            color = paleta[5],  # line colour 
+                                             highlight = highlightOptions(weight = 2,
+                                                                          color = "red", # Color de selección
+                                                                          dashArray = "",
+                                                                          fillOpacity = 0.6,
+                                                                          bringToFront = TRUE),
+                           options = pathOptions(pane = "layer5"), 
+                           label = state_popup_municipio5,  # Etiquetas
+                           labelOptions = labelOptions(textOnly = FALSE, 
+                                                        opacity = 0.8,
+                                                         style = list("font-weight" = "normal", 
+                                                                      "font-family" = "montserrat",                 
+                                                                       opacity = 0.7,
+                                                                       padding = "3px 8px"),
+                                                                       textsize = '15px',
+                                                                       direction = "auto"),
+                           group = "No hay") %>% 
+            # capa de estados
+                addPolylines(data = shape_estados,
+                              layerId = as.character(shape_estados@data$CVE_ENT),
+                               options = pathOptions(pane = "estados"),  
+                                fillColor = 'transparent',
+                                 color = "#575757", 
+                                  opacity = 0.7, 
+                                   weight = 2.1,
+                                    group = "GM") 
+```
+
+
+### Legend and features 
+
+```{r}
+leaflet <- leaflet %>% 
+            addResetMapButton() %>%
+             addSearchOSM() %>%
+              addScaleBar(position = "bottomright", 
+                           options = scaleBarOptions(maxWidth = 100, 
+                                                     metric = TRUE,
+                                                     imperial = TRUE, 
+                                                     updateWhenIdle = TRUE)) %>%
+               addLegend("bottomright", 
+                         colors = paleta, 
+                         labels = c("Completa", "Grave", "Moderada", "Ligera", "No hay"),
+                         values = ~forcats::fct_relevel(G_ICE, c("Completa", "Grave", "Moderada", "Ligera", "No hay")),
+                         title = stringr::str_wrap("Barreras", 15),
+                         opacity =  0.7) %>%
+                addLayersControl(overlayGroups = c("Completa", "Grave", "Moderada", "Ligera", "No hay"),
+                                 options = layersControlOptions(collapsed = TRUE)) 
+leaflet
+
+#saveRDS(leaflet, paste0(here::here(), "/Graficos/leaflet.RDS"))
+#saveWidget(leaflet, paste0(here::here(), "/Graficos/leaflet.html"), selfcontained = TRUE)
+```
+
+#### Output  
+
+```{r, eval = FALSE}
+leaflet %>% 
+ mapshot(url = paste0(here::here(), "/Municipio/Output/ICE_2020.html")) 
+```
+
+```{r, collapse=FALSE}
+sesion_info <- devtools::session_info()
+```
+
+
+```{r, echo = FALSE}
+require(knitr)
+require(kableExtra)
+kable(dplyr::select(tibble::as_tibble(sesion_info$packages %>% dplyr::filter(attached == TRUE)),
+                    c(package, loadedversion, source))) %>%
+   kable_classic(full_width = TRUE, html_font = "montserrat", font_size = 10) 
+```
+
+
+<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img src="https://i.creativecommons.org/l/by/4.0/88x31.png" alt="Creative Commons Licence" style="border-width:0"/></a><br />This work by [**Diana Villasana Ocampo**]{xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName"} is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+
+
