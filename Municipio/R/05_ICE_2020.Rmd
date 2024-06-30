@@ -2,7 +2,7 @@
 title: "Índice de calidad del entorno"
 output: 
   flexdashboard::flex_dashboard:
-    logo: https://github.com/dvillasanao/ICE_2020_Leaflet/blob/main/img/images.svg
+    logo: https://raw.githubusercontent.com/dvillasanao/ICE_2020_Leaflet/main/img/images.svg
     output_dir: docs
     orientation: columns
     vertical_layout: fill
@@ -27,8 +27,8 @@ output:
 ---
 <style>
 img{
-     max-width:100%;
-     max-height:100%;
+     max-width:10%;
+     max-height:10%;
      background-color: 'transparent';
 }
 </style>
