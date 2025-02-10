@@ -50,3 +50,8 @@ rsconnect/
 
 Municipio/Output/Shapes/
 Municipio/Output/PopUp/
+Localidad/
+.Rproj.user
+.Rdata
+.DS_Store
+.quarto
